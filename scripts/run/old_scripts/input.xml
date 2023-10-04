@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<test>
+    <membw-main enable='1'> <!--enables a experiemnt to vary the value size for the dbbench-->
+        <seed-count>2</seed-count>  <!--specifies factor by which value size for a KV pair should be incremented-->
+        <num-tests>1</num-tests> <!-- number of tests to run -->
+        <membw>1000</membw>  <!--Memory bandwidth default value-->
+	<maxbwtest>1</maxbwtest>
+    </membw-main>
+   <numabind>
+	<node>0</node>
+	<node>1</node>
+   </numabind>
+    <benchmarks> <!-- tags specify type of DBbench's benchmark -->
+	<!--test>kernbuff_node0</test>
+	<test>kernbuff_node1</test>
+	<test>pgcache_node0</test>
+	<test>pgcache_node1</test-->
+	<test>cachekernbuff_node1</test>
+	<test>cachekernbuff_node0</test>
+    </benchmarks>
+</test>
+

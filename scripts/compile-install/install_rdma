@@ -1,0 +1,63 @@
+#!/bin/bash
+
+## This script is for MLX4:ConnectX-3
+## Tested on IBmellanox profile with r320 nodes on Cloudlab, linux 4.15
+## https://www.cloudlab.us/show-profile.php?uuid=cfdabebc-4503-11ea-9203-e4434b2381fc
+
+sudo apt update; sudo apt install -y rdma-core libibmad-dev opensm ibutils infiniband-diags perftest mstflint libibverbs-dev rdmacm-utils librdmacm-dev
+
+sudo reboot
+
+
+########### END of SCRIPT #############
+
+
+## to check if your IB device is working fine:
+
+1. shaleen@node-0:~$ ibstat ##Example Output
+CA 'mlx4_0'
+	CA type: MT4099
+	Number of ports: 2
+	Firmware version: 2.42.5000
+	Hardware version: 1
+	Node GUID: 0xf452140300155030
+	System image GUID: 0xf452140300155033
+	Port 1:
+		State: Down
+		Physical state: Disabled
+		Rate: 40
+		Base lid: 0
+		LMC: 0
+		SM lid: 0
+		Capability mask: 0x04010000
+		Port GUID: 0xf65214fffe155031
+		Link layer: Ethernet
+	Port 2:
+		State: Active
+		Physical state: LinkUp
+		Rate: 10
+		Base lid: 0
+		LMC: 0
+		SM lid: 0
+		Capability mask: 0x04010000
+		Port GUID: 0xf65214fffe155032
+		Link layer: Ethernet
+
+	##Atleast One port should be Active and LinkUp
+
+2. ifconfig ## enp8s0d1 or something similar should be visible
+
+enp8s0d1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.0.1.1  netmask 255.255.255.0  broadcast 10.0.1.255
+        inet6 fe80::f652:14ff:fe15:5032  prefixlen 64  scopeid 0x20<link>
+        ether f4:52:14:15:50:32  txqueuelen 1000  (Ethernet)
+        RX packets 7  bytes 496 (496.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 12  bytes 956 (956.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+
+## RDMA HelloWorld program: https://github.com/animeshtrivedi/rdma-example
+
+## About RDMA : https://www.mellanox.com/related-docs/prod_software/RDMA_Aware_Programming_user_manual.pdf

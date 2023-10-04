@@ -1,0 +1,19 @@
+<?xml version="1.0"?> 
+
+<!--
+     This test varies the thread count for db_bench
+-->
+
+<data>
+	<name>Snappy</name>
+	<folder>snappy</folder>
+
+	<run>
+		<name>1 thread</name>
+		<folder>01_thread_compoundfs</folder>
+		<key>1</key>
+		<description>Runs benchmarks with 1 thread</description>
+                <command>/users/Jian123/ssd/fsoffload/appbench/snappy-c/snappy_test_offload /mnt/ram/dataset</command>
+	</run>
+	
+</data>

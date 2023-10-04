@@ -1,0 +1,42 @@
+Linux kernel
+============
+
+To install
+1. cp oldnix.config .config ##old or new based on which you want to install
+2. sudo make prepare -j`nproc`
+3. sudo make -j40
+4. sudo fakeroot make-kpkg -j40 --initrd kernel-image kernel-headers
+5. sudo dpkg -i ../*.deb ##fill the name accordingly
+
+To get global cache stats:
+1. add CONFIG_ENABLE_CROSSLAYER=y in .config. make prepare
+2. Take a look at examples/global_cache_stats.c on how to use it
+
+
+To enable cache accounting for an application:
+1. enable CONFIG_CACHE_LIMITING
+2. Before starting the userspace application, call syscall(448) with CACHE_USAGE_CONS
+3. CACHE_USAGE_RET returns the current cache usage for this set of applications
+4. CACHE_USAGE_RESET resets the global cache usage counter
+5. Using the values returned as current cache usage, the application can drive its prefetching/cache handling policies. Look at shared_libs/pred/README
+6. <ADD an example file>
+
+
+New Syscalls: 
+1. start_cross_trace : Syscall nr 448
+2. pread_ra : Syscall nr 449
+3. read_ra  : Syscall nr 450
+4. readahead_info : Syscall nr 451
+
+
+Different CONFIGS in Linux:
+1. CONFIG_ENABLE_CROSS_STATS: Enables crosslayer stats collection etc.
+2. CONFIG_ENABLE_CROSSLAYER_DEBUG : Enables debug messages in the crosslayer code
+3. CONFIG_PREFETCH_2MB_LIMIT : Enables default behaviour of prefetching in 2MB chunks (force_page_cache_ra)
+4. CONFIG_UNLIMITED_MAX_SECTORS : Makes MAX_SECTORS=MAX_LONG, this will let prefetching increase to unlimited numbers
+5. CONFIG_CACHE_LIMITING : Enables cache limiting for applications
+6. CONFIG_CROSS_FILE_BITMAP : Enables readahead_info to send page cache bitmap to userspace
+
+
+Different procfs in modified linux:
+1. /proc/unbounded_read: enables/disables unbounded reads/readaheads in linux. 0 -> vanilla linux with all the limits normally applicable. 1 -> disable limits on reads/readaheads
