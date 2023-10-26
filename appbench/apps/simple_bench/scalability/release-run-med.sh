@@ -7,6 +7,7 @@ producer=${1:-$default}
 # Specify the base directories for code and result
 CODE=$PWD
 DBDIR=$CODE/DATA
+DBHOME=$PWD
 
 RESULT_BASE=$PWD/results/
 result_dir=$RESULT_BASE/concurrency
@@ -24,10 +25,7 @@ let MAX_READER=16
 let MAX_WRITER=4
 ERR=100
 
-#declare -a config_arr=("Vanilla" "OSonly" "CPBI")
 declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CIPI_interval")
-#declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
-#declare -a config_arr=("CIPI" "CIPI_interval")
 #
 FILESIZE="12G"
 FILENAME="testfile"
@@ -84,10 +82,17 @@ ARGS="-q $QUEUEDEPTH -s $IOSIZE -t $READERS -u $WRITERS -p $SCHED -v $DEVCORECOU
 $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> /tmp/log
 
 declare -a readers=("1" "4" "8" "16")
-#declare -a readers=("1" "16")
-#declare -a readers=("1")
-
 FlushDisk
+
+
+cp $DBHOME/Makefile.Scalability $PREDICT_LIB_DIR/Makefile
+cp $DBHOME/PARAMS.sh $PREDICT_LIB_DIR/compile.sh
+
+cd $PREDICT_LIB_DIR
+$PREDICT_LIB_DIR/compile.sh
+FlushDisk
+FlushDisk
+cd $DBHOME
 
 WRITERS=4
 # Vary the number of producer(writer)
@@ -100,29 +105,18 @@ do
         do
             ARGS="-q $QUEUEDEPTH -s $IOSIZE -t $reader -u $WRITERS -p $SCHED -v $DEVCORECOUNT -b $FILESIZE"	
 
-			# echo ".......START $CONFIG, Writer: $WRITERS, Reader: $reader ......................"
             RESULTFILE=$result_dir/$WRITERS/$reader/$CONFIG.out
-
             LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $RESULTFILE
-
-            #LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS #&> $result_dir/$WRITERS/$reader/output.txt
-
-            #sudo perf record -F 99  --call-graph dwarf env LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
-
-			# echo ".......FINISHING $CONFIG, Writer: $WRITERS, Reader: $reader ......................"
-			#cat $result_dir/$WRITERS/$reader/$CONFIG.out | grep "writer"
             cat $RESULTFILE | grep "ops/sec"
             VAL=`cat $RESULTFILE | grep "ops/sec;" | awk '{print $5}'`
             if [ -z "$VAL" ]; then
                 VAL=0
             fi
             if [ "$ERR" -gt "$VAL" ]; then
-			    FlushDisk
+		FlushDisk
                 LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $RESULTFILE
             fi
-
-			FlushDisk
-
+	   FlushDisk
         done 
         echo ".......FINISHING Reader Threads $reader......................"
         echo "-------------------------------------------------------------"
@@ -130,3 +124,9 @@ do
 	done
 	WRITERS=$((WRITERS*2))
 done
+
+cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile	
+cp $DBHOME/PARAMS.sh $PREDICT_LIB_DIR/compile.sh
+
+
+
