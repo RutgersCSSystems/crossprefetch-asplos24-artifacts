@@ -1011,6 +1011,46 @@ return;
 }
 
 
+
+void inline blind_prefetch_file(int fd){
+
+	struct thread_args *arg;
+	off_t filesize;
+	off_t stride;
+	struct u_inode *uinode;
+
+	filesize = reg_fd(fd);
+	stride = 0;
+	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
+
+	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+	if(!arg) {
+		goto blind_prefetch_file_exit;
+	}
+	arg->fd = fd;
+	arg->file_size = filesize;
+	arg->stride = stride;
+	arg->current_fd = 0;
+	arg->last_fd = 0;
+
+#ifdef FULL_PREFETCH
+	//Allows the whole file to be prefetched at once
+	arg->prefetch_size = filesize;
+	debug_printf("%s: Doing a full prefetch %zu bytes\n", __func__, filesize);
+
+#endif
+	real_readahead(fd, 0, filesize);
+	//threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
+	//g_next_queue++;
+
+blind_prefetch_file_exit:
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
+
+
+
+
 	/*
 	 * Spawns or enqueues a request for file prefetching
 	 */
@@ -1281,7 +1321,6 @@ void handle_open(struct file_desc desc){
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
 	record_open(desc);
 #endif
-
 	/*
 	 * DONT compile library with both PREDICTOR and BLIND_PREFETCH
 	 */
@@ -1289,6 +1328,11 @@ void handle_open(struct file_desc desc){
 	// Prefetch without predicting
 	prefetch_file(desc.fd);
 #endif
+
+#ifdef TUNE
+	blind_prefetch_file(desc.fd);
+#endif
+
 	debug_printf("Exiting %s\n", __func__);
 }
 
@@ -1314,24 +1358,22 @@ void update_file_predictor_and_prefetch(void *arg){
 		return;
 	}
 
-#if 0 //def ENABLE_EVICTION
-		if(fp->uinode != NULL) {
-			set_uinode_access_time(fp->uinode);
+	if(fp){
+#ifdef TUNE
+		if(fp->num_seq_updates > 0) {
+			 //printf("%s: updating predictor fd:%d, offset:%ld, seq "
+			//		 "updates %d\n", __func__, a->fd,
+			//		 a->offset, fp->num_seq_updates);
+			return;
 		}
 #endif
-	if(fp){
+
 		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
 		fp->predictor_update(a->offset, a->data_size);
 		fp->nr_reads_done += 1L;
 
 		if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0))
 			return;
-#if 0
-		/*update lru if file is fully prefetched*/
-		if(fp->uinode->fully_prefetched.load()){
-				update_lru(fp->uinode);
-		}
-#endif
 		if(fp->should_prefetch_now()){
 			a->fp = fp;
 			prefetch_file_predictor((void*)arg);

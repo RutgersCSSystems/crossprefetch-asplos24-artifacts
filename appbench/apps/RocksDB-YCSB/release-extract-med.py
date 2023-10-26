@@ -2,10 +2,10 @@ import os
 import csv
 
 # Define the arrays
-thread_arr = ["8"]
-workload_arr = ["ycsbwklda", "ycsbwkldb", "ycsbwkldc", "ycsbwkldd", "ycsbwklde", "ycsbwkldf"]
-config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CII"]
-config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
+thread_arr = ["16"]
+workload_arr = ["ycsbwklda", "ycsbwkldb", "ycsbwkldc", "ycsbwkldd", "ycsbwklde"]
+config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF_NOOPT", "CIPI_PERF"]
+config_out_arr = ["APPonly", "OSonly","CrossP[+fetchall+opt]", "CrossP[+predict]", "CrossP[+predict+opt]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")

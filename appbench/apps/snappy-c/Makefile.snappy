@@ -71,7 +71,7 @@ CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR  -DMODIF
 #all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Info_Concurrent_Predict Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync Cross_Info_Budget Cross_Info_Pred_Budget Cross_Info_Predict_sync CLEAR_STATS Cross_Info_Predict_IOOPT_sync
 
 
-all: Vanilla Cross_Blind OSonly Cross_Info Cross_Info_sync  Cross_Info_Predict Cross_Info_Predict_IOOPT Cross_Info_Predict_IOOPT_sync Cross_Info_IOOPT Cross_Info_IOOPT_sync Cross_Info_Pred_Budget Cross_Info_Pred_Budget_IOOPT Cross_Info_Pred_Budget_IOOPT_sync Cross_Info_Predict_sync Cross_Info_Predict_IOOPT_PERF Cross_Info_Pred_Budget_IOOPT_PERF Cross_Info_Predict_IOOPT_ITER Cross_Info_Predict_MMAP
+all: Vanilla Cross_Blind OSonly Cross_Info Cross_Info_sync  Cross_Info_Predict Cross_Info_Predict_IOOPT Cross_Info_Predict_IOOPT_sync Cross_Info_IOOPT Cross_Info_IOOPT_sync Cross_Info_Pred_Budget Cross_Info_Pred_Budget_IOOPT Cross_Info_Pred_Budget_IOOPT_sync Cross_Info_Predict_sync Cross_Info_Predict_IOOPT_PERF Cross_Info_Pred_Budget_IOOPT_PERF Cross_Info_Predict_IOOPT_ITER Cross_Info_Predict_MMAP Cross_Info_Predict_IOOPT_PERF_NOOPT
 
 #DISABLE_ADV Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync Cross_Info_Budget Cross_Info_Pred_Budget Cross_Info_Predict_sync CLEAR_STATS Cross_Info_Predict_IOOPT_sync INTERCEPT
 
@@ -134,6 +134,11 @@ Cross_Info_Predict_IOOPT_PERF: $(SOURCES)
 	    $(VAR_FLAGS) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)  -DPREFETCH_BOOST -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -ljemalloc $(DISABLE_FADV_RANDOM)\
 	    #-D_PERF_OPT_EXTREME -D_PERF_OPT
 	    #-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DPREFETCH_BOOST -D_PERF_OPT_EXTREME -D_PERF_OPT -ljemalloc #$(DISABLE_FADV_RANDOM) 
+
+
+Cross_Info_Predict_IOOPT_PERF_NOOPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_PERF_NOOPT.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)  -DPREFETCH_BOOST $(DISABLE_FADV_RANDOM)\
 
 Cross_Info_Pred_Budget_IOOPT_PERF: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI_PERF.so $^ $(LIBS) $(DEBUG) $(VAR_FLAGS) $(THPOOL_BLOCK_RA_BUDGET_INFO) $(DISABLE_FADV_RANDOM) \

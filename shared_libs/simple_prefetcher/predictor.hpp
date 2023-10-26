@@ -46,7 +46,8 @@ class file_predictor{
 		int fd;
 		size_t filesize;
 
-        long nr_reads_done;
+        	long nr_reads_done;
+		int num_seq_updates;
 
 		/*
 		 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions

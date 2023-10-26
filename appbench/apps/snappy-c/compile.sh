@@ -11,5 +11,6 @@ FlushDisk()
 }
 
 FlushDisk
+sudo apt-get install -y libnuma-dev
 make clean
 make

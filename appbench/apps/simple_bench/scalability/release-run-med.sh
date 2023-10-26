@@ -22,9 +22,10 @@ let QUEUEDEPTH=1
 
 let MAX_READER=16
 let MAX_WRITER=4
+ERR=100
 
 #declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("Vanilla" "OSonly" "CIPI" "CIPI_interval")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CIPI_interval")
 #declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
 #declare -a config_arr=("CIPI" "CIPI_interval")
 #
@@ -100,8 +101,9 @@ do
             ARGS="-q $QUEUEDEPTH -s $IOSIZE -t $reader -u $WRITERS -p $SCHED -v $DEVCORECOUNT -b $FILESIZE"	
 
 			# echo ".......START $CONFIG, Writer: $WRITERS, Reader: $reader ......................"
+            RESULTFILE=$result_dir/$WRITERS/$reader/$CONFIG.out
 
-            LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $result_dir/$WRITERS/$reader/$CONFIG.out
+            LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $RESULTFILE
 
             #LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS #&> $result_dir/$WRITERS/$reader/output.txt
 
@@ -109,6 +111,16 @@ do
 
 			# echo ".......FINISHING $CONFIG, Writer: $WRITERS, Reader: $reader ......................"
 			#cat $result_dir/$WRITERS/$reader/$CONFIG.out | grep "writer"
+            cat $RESULTFILE | grep "ops/sec"
+            VAL=`cat $RESULTFILE | grep "ops/sec;" | awk '{print $5}'`
+            if [ -z "$VAL" ]; then
+                VAL=0
+            fi
+            if [ "$ERR" -gt "$VAL" ]; then
+			    FlushDisk
+                LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $RESULTFILE
+            fi
+
 			FlushDisk
 
         done 

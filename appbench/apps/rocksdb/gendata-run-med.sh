@@ -35,8 +35,8 @@ mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a num_arr=("25000000")
-NUM=25000000
+declare -a num_arr=("30000000")
+NUM=30000000
 
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
 

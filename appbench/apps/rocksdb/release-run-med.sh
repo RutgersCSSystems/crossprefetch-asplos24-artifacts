@@ -24,6 +24,9 @@ WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 APPPREFIX="/usr/bin/time -v"
 
+PARAMS=""
+ERR=100
+
 APP=db_bench
 APPOUTPUTNAME="ROCKSDB"
 
@@ -49,10 +52,7 @@ declare -a membudget=("6")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
-declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
-
-#declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
-
+declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT" "CIPI_PERF" "CPBI_PERF")
 
 G_TRIAL="TRIAL1"
 #Require for large database
@@ -107,6 +107,16 @@ GEN_RESULT_PATH() {
 	echo $RESULTFILE
 }
 
+EXECUTE() {
+
+    CONFIG=$1
+    #echo "RUNNING $CONFIG $PARAMS $READARGS and writing results to  $RESULTFILE"
+    export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+    $APPPREFIX "./"$APP $PARAMARG $ARGS &> $RESULTFILE
+    export LD_PRELOAD=""
+
+}
+
 
 
 RUN() {
@@ -130,9 +140,24 @@ RUN() {
 			for THREAD in "${thread_arr[@]}"
 			do
 				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
-				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 				for WORKLOAD in "${workload_arr[@]}"
 				do
+					if [[ $WORKLOAD == "readseq" ]]; then
+						#echo "READSEQ"
+						cp PARAMS.sh $PREDICT_LIB_DIR/compile.sh
+						cp Makefile.ROCKSDB $PREDICT_LIB_DIR/Makefile
+						cd $PREDICT_LIB_DIR
+						./compile.sh &>> out.txt
+						cd $DBHOME
+					else
+						cd $PREDICT_LIB_DIR
+						cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
+						#cp $PREDICT_LIB_DIR/COMPILEORIG.sh $PREDICT_LIB_DIR/compile.sh
+						cd $DBHOME
+						./compile.sh &>> out.txt	
+						cd $DBHOME
+					fi
+
 					for CONFIG in "${config_arr[@]}"
 					do
 						RESULTS=""
@@ -151,6 +176,17 @@ RUN() {
 						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 						$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 						export LD_PRELOAD=""
+
+
+						#cat $RESULTFILE | grep "ops/sec"
+						VAL=`cat $RESULTFILE | grep "ops/sec" | awk '{print $5}'`
+						if [ -z "$VAL" ]; then
+							VAL=0
+						fi
+						if [ "$ERR" -gt "$VAL" ]; then
+						  EXECUTE $CONFIG $PARAMS $READARGS $RESULTFILE
+						fi
+
 						sudo dmesg -c &>> $RESULTFILE
 						echo ".......FINISHING $CONFIG......................"
 						#cat $RESULTFILE | grep "MB/s"
@@ -162,17 +198,17 @@ RUN() {
 }
 
 GETMEMORYBUDGET() {
-        sudo rm -rf  /mnt/ext4ramdisk/*
-        $SCRIPTS/mount/umount_ext4ramdisk.sh
-        sudo rm -rf  /mnt/ext4ramdisk/*
-        sudo rm -rf  /mnt/ext4ramdisk/
+    sudo rm -rf  /mnt/ext4ramdisk/*
+    $SCRIPTS/mount/umount_ext4ramdisk.sh
+    sudo rm -rf  /mnt/ext4ramdisk/*
+    sudo rm -rf  /mnt/ext4ramdisk/
 
 	echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
 	$SCRIPTS/mount/releasemem.sh "NODE0"
 	$SCRIPTS/mount/releasemem.sh "NODE1"
 
-        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+    let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+    let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
 
 	echo "MEMORY $1"
 	let FRACTION=$1
@@ -183,8 +219,8 @@ GETMEMORYBUDGET() {
 	let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
 
 
-        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
-        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+    numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+    numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
 

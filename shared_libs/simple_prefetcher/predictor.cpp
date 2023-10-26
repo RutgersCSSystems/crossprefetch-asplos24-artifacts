@@ -48,7 +48,7 @@ file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
         filesize = size;
 
         nr_reads_done = 0;
-
+	num_seq_updates = 0;
 
         portion_sz = PAGESIZE * PORTION_PAGES;
         nr_portions = size/portion_sz;
@@ -166,10 +166,12 @@ void file_predictor::predictor_update(off_t offset, size_t size){
 is_not_seq:
         old_seq = sequentiality;
         sequentiality = (std::max<int>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
+	num_seq_updates++;
 
         goto exit_success;
 
 is_seq:
+	num_seq_updates++;
 	/* If the access difference between current and previous
 	* access is still too wide,
 	* may be not change the current state?

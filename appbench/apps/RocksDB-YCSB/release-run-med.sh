@@ -7,6 +7,7 @@ SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
+ERR=100
 #DBDIR=/mnt/remote/DATA
 
 
@@ -26,6 +27,7 @@ APP=db_bench
 APPOUTPUTNAME="YCSB-ROCKSDB"
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
+PARAMS=""
 
 mkdir -p $RESULTS
 
@@ -33,18 +35,16 @@ declare -a num_arr=("10000000")
 NUM=10000000
 
 #declare -a thread_arr=("1" "4" "8" "16")
-declare -a thread_arr=("8")
-declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
-declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
-#declare -a config_arr=("CII")
-
+declare -a thread_arr=("16")
+declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde")
+declare -a config_arr=("CIPI_PERF" "CII" "CIPI" "CIPI_PERF_NOOPT" "Vanilla" "OSonly")
+#declare -a config_arr=("CIPI_PERF" "CIPI_PERF_NOOPT")
 
 USEDB=1
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
-#Require for large database
 ulimit -n 1000000 
 
 
@@ -109,6 +109,15 @@ WARMPUP() {
 }
 
 
+EXECUTE() {
+
+    CONFIG=$1
+    #echo "RUNNING $CONFIG $PARAMS $READARGS and writing results to  $RESULTFILE"
+    export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+    $APPPREFIX "./"$APP $PARAMARG $ARGS &> $RESULTFILE
+    export LD_PRELOAD=""
+
+}
 
 RUN() {
 	for NUM in "${num_arr[@]}"
@@ -120,6 +129,8 @@ RUN() {
 
 			for WORKLOAD in "${workload_arr[@]}"
 			do
+				#WARMPUP
+
 				for CONFIG in "${config_arr[@]}"
 				do
 					RESULTS=""
@@ -128,14 +139,25 @@ RUN() {
 
 					mkdir -p $RESULTS
 
-					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
+					echo "RUNNING $CONFIG $PARAMS $READARGS and writing results to $RESULTFILE"
 					echo "..................................................."
+
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 					export LD_PRELOAD=""
+
+					cat $RESULTFILE | grep "ops/sec"
+					VAL=`cat $RESULTFILE | grep "ops/sec;" | awk '{print $5}'`
+					if [ -z "$VAL" ]; then
+  						VAL=0
+					fi
+					if [ "$ERR" -gt "$VAL" ]; then
+  					  EXECUTE $CONFIG $PARAMS $READARGS $RESULTFILE
+					fi
+
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
-					cat $RESULTFILE | grep "ops/sec"
+
 					FlushDisk
 				done
 			done
@@ -144,9 +166,11 @@ RUN() {
 }
 
 WARMPUP
+
 FlushDisk
 FlushDisk
-cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
+cp PARAMS.sh $PREDICT_LIB_DIR/compile.sh
+#cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
 cp $DBHOME/Makefile.YCSB $PREDICT_LIB_DIR/Makefile
 cd $PREDICT_LIB_DIR
 $PREDICT_LIB_DIR/compile.sh
@@ -155,6 +179,7 @@ FlushDisk
 cd $DBHOME
 
 RUN
-cp $PREDICT_LIB_DIR/Makefile.orig $PREDICT_LIB_DIR/Makefile
+cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
+cp $PREDICT_LIB_DIR/COMPILEORIG.sh $PREDICT_LIB_DIR/compile.sh
 exit
 

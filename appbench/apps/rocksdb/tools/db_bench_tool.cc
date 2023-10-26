@@ -5772,7 +5772,7 @@ class Benchmark {
     int64_t i = 0;
     int64_t bytes = 0;
 
-    //reads_ = 25000000;
+    reads_ = 4000000;
 
     for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
       bytes += iter->key().size() + iter->value().size();

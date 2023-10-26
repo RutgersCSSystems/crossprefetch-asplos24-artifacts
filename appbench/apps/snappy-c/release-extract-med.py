@@ -5,8 +5,8 @@ import csv
 thread_arr = ["32"]
 workload_arr = ["100"]
 filesize_arr = ["140000"]
-config_arr = ["Vanilla",  "OSonly", "CIPI_PERF", "CII"]
-config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
+config_arr = ["Vanilla",  "OSonly", "CII", "CIPI_PERF"] 
+config_out_arr = ["APPonly", "OSonly", "CrossP[+fetchall+opt]" "CrossP[+predict+opt]"]
 membudget = ["10", "11", "12", "13", "14"]
 
 # Base directory for output files

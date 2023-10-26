@@ -2,7 +2,7 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl #-lmpi
-FLAGS=-fPIC -shared -std=c++14 -Wno-unused-result -O3 #-g
+FLAGS=-fPIC -shared -std=c++14 -Wno-unused-result -O3 -g
 INCLUDE=
 
 KB=1024
@@ -27,6 +27,9 @@ SOURCESBASIC = libOSonly.cpp
 #ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
 #ENABLE_MPI=-DENABLE_MPI
 OTHERFLAGS=-DMAINTAIN_UINODE -DPER_INODE_BITMAP $(ENABLE_MPI) $(ENABLE_OS_STATS) $(ENABLE_LIB_STATS)
+
+MMAP_VAR_FLAGS=-DNR_RA_PAGES=$(NR_RA_PAGES) -DNR_WORKERS=$(NR_WORKERS) -DPORTION_PAGES=$(PORTION_PAGES) $(OTHERFLAGS) #-D_ENABLE_PTHREAD_LOCK #-D_SPIN_XCHG_BACKOFF #-D_ENABLE_PTHREAD_LOCK
+MMAP_VAR_FLAGS+=-DNR_ADJACENT_CHECK=$(NR_ADJACENT_CHECK) -DMIN_FILE_SZ=$(MIN_FILE_SZ) -DCROSS_BITMAP_SHIFT=39
 
 VAR_FLAGS=-DNR_RA_PAGES=$(NR_RA_PAGES) -DNR_WORKERS=$(NR_WORKERS) -DPORTION_PAGES=$(PORTION_PAGES) $(OTHERFLAGS) #-D_ENABLE_PTHREAD_LOCK #-D_SPIN_XCHG_BACKOFF #-D_ENABLE_PTHREAD_LOCK
 VAR_FLAGS+=-DNR_ADJACENT_CHECK=$(NR_ADJACENT_CHECK) -DMIN_FILE_SZ=$(MIN_FILE_SZ) -DCROSS_BITMAP_SHIFT=$(CROSS_BITMAP_SHIFT)
@@ -68,7 +71,14 @@ PREDICTOR_THPOOL_BLOCK_RA_INFO_SYNC=-DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_P
 CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR  -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DCONCURRENT_PREDICTOR
 
 
-all: Vanilla Cross_Blind OSonly  Cross_Info_Predict_IOOPT Cross_Info_Predict_IOOPT_sync Cross_Info_IOOPT Cross_Info_IOOPT_sync Cross_Info_Pred_Budget_IOOPT Cross_Info_Pred_Budget_IOOPT_sync Cross_Info_Predict_sync Cross_Info_Predict_IOOPT_PERF Cross_Info_Pred_Budget_IOOPT_PERF Cross_Info_Predict_IOOPT_ITER Cross_Info_Predict_MMAP
+#all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Info_Concurrent_Predict Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync Cross_Info_Budget Cross_Info_Pred_Budget Cross_Info_Predict_sync CLEAR_STATS Cross_Info_Predict_IOOPT_sync
+
+
+all: Vanilla Cross_Blind OSonly Cross_Info Cross_Info_sync  Cross_Info_Predict Cross_Info_Predict_IOOPT Cross_Info_Predict_IOOPT_sync Cross_Info_IOOPT Cross_Info_IOOPT_sync Cross_Info_Pred_Budget Cross_Info_Pred_Budget_IOOPT Cross_Info_Pred_Budget_IOOPT_sync Cross_Info_Predict_sync Cross_Info_Predict_IOOPT_PERF Cross_Info_Pred_Budget_IOOPT_PERF Cross_Info_Predict_IOOPT_ITER Cross_Info_Predict_MMAP
+
+#DISABLE_ADV Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync Cross_Info_Budget Cross_Info_Pred_Budget Cross_Info_Predict_sync CLEAR_STATS Cross_Info_Predict_IOOPT_sync INTERCEPT
+
+
 
 #App Readahead + readahead syscall (Only constructor and destructor)
 Vanilla: $(SOURCESBASIC) #$(SOURCES)
@@ -78,6 +88,17 @@ Vanilla: $(SOURCESBASIC) #$(SOURCES)
 OSonly: $(SOURCESBASIC) #$(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
 	    $(DISABLE_FADV_RANDOM) $(OS_ONLY) #$(VAR_FLAGS) 
+
+
+#Cross-Blind + readahead_info syscall + bitmap checking
+Cross_Info: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Info.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
+
+#Cross-Blind + readahead_info syscall + bitmap checking - Thpool
+Cross_Info_sync: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Info_sync.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(BLOCK_RA_INFO)
 
 #Cross-Info + IOOPT
 Cross_Info_IOOPT: $(SOURCES)
@@ -91,6 +112,12 @@ Cross_Info_IOOPT_sync: $(SOURCES)
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(BLOCK_RA_INFO) \
 	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
 
+#Cross_Info + Predictor
+Cross_Info_Predict: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIP.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)
+
+	    
 #Cross_Info + Predictor + No thread pool
 Cross_Info_Predict_sync: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIP_sync.so $^ $(LIBS) $(DEBUG) \
@@ -103,11 +130,12 @@ Cross_Info_Predict_IOOPT: $(SOURCES)
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
 	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
 
+
 #Cross_Info_Predict + IOOPT + PERF_OPT
 Cross_Info_Predict_IOOPT_PERF: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_PERF.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
-	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DPREFETCH_BOOST -D_PERF_OPT_EXTREME -D_PERF_OPT -ljemalloc $(DISABLE_FADV_RANDOM) 
+	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DPREFETCH_BOOST -D_PERF_OPT_EXTREME -D_PERF_OPT -ljemalloc #$(DISABLE_FADV_RANDOM) 
 
 Cross_Info_Pred_Budget_IOOPT_PERF: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI_PERF.so $^ $(LIBS) $(DEBUG) $(VAR_FLAGS) $(THPOOL_BLOCK_RA_BUDGET_INFO) $(DISABLE_FADV_RANDOM) \
@@ -116,11 +144,11 @@ Cross_Info_Pred_Budget_IOOPT_PERF: $(SOURCES)
 Cross_Info_Predict_IOOPT_ITER: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_interval.so $^ $(LIBS) -Wl,--no-as-needed -lintervaltreelib $(DEBUG) \
 		$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
-		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DINTERVAL_BITMAP  -D_PERF_OPT -D_PERF_OPT_EXTREME -DDISABLE_RWLOCK
+		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DINTERVAL_BITMAP  -D_PERF_OPT -D_PERF_OPT_EXTREME
 
 Cross_Info_Predict_MMAP:  $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_mmap.so $^ $(LIBS) $(DEBUG) \
-		$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
+		$(MMAP_VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
 		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DMMAP_PREDICT
 
 #Cross_Info + IOOPT_+ Predictor + No thread pool
@@ -128,6 +156,11 @@ Cross_Info_Predict_IOOPT_sync: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_sync.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO_SYNC) -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT	    
 	    
+Cross_Info_Pred_Budget: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPB.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_BUDGET_INFO)
+
+
 Cross_Info_Pred_Budget_IOOPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(THPOOL_BLOCK_RA_BUDGET_INFO) $(DISABLE_FADV_RANDOM)  -D_PERF_OPT -D_PERF_OPT_EXTREME -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT 
@@ -138,12 +171,69 @@ Cross_Info_Pred_Budget_IOOPT_sync: $(SOURCES)
 	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
 
 
+
+
+
+
+
+
+
+
+
+#Cross-Blind + readahead_info syscall + bitmap checking + Mem Evictions
+Cross_Info_Budget: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIB.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(THPOOL_BLOCK_RA_INFO_BUDGET)
+
+
+
 #Just blind prefetch, all app readahead disabled, readahead syscall
 Cross_Blind: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Blind.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
 
     
+Vanilla_Predict: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VP.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA)
+
+#Cross_Info + Concurrent Predictor
+Cross_Info_Concurrent_Predict: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CICP.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO)
+
+
+Vanilla_RA: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRA.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
+
+Vanilla_RA_IOOPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRAI.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED) \
+	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
+
+
+Cross_Naive_full: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CNF.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FULL_RA_INFO) $(DISABLE_FADV_DONTNEED)
+
+
+Cross_Naive_IOOPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CNI.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_INFO) $(DISABLE_FADV_DONTNEED) \
+	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
+
+
+
+INTERCEPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_INTERCEPT.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(ONLY_INTERCEPT)
+
+DISABLE_ADV: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_DISABLE_ADV.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_DONTNEED) $(DISABLE_MADV_DONTNEED)
+
+
 CLEAR_STATS: clear-stats.c
 	$(CC) $^ -o clear_os_stats
 

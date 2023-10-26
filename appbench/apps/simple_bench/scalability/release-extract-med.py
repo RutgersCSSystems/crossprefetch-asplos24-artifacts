@@ -4,7 +4,8 @@ import csv
 # Define the arrays
 thread_arr = ["1","4","8","16"]
 #workload_arr = ["read_shared_mmap_rand", "read_shared_mmap_seq"]
-config_arr = ["Vanilla", "OSonly", "CIPI", "CIPI_interval"]
+#config_arr = ["Vanilla", "OSonly", "CIPI", "CIPI_interval"]
+config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CIPI_interval"]
 config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
 
 # Base directory for output files
