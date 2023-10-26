@@ -37,6 +37,7 @@ declare -a membudget=("4")
 USEDB=0
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
+DBHOME=$PWD
 
 
 FlushDisk()
@@ -140,6 +141,8 @@ GETMEMORYBUDGET() {
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
+cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
+cp $DBHOME/PARAMS.sh $PREDICT_LIB_DIR/compile.sh
 
 for G_TRIAL in "${trials[@]}"
 do
@@ -156,3 +159,5 @@ do
                 RUN
         fi
 done
+
+cp $PREDICT_LIB_DIR/COMPILEORIG.sh  $PREDICT_LIB_DIR/compile.sh
