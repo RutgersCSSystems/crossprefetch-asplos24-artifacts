@@ -35,7 +35,6 @@ RESULTFILE=""
 
 mkdir -p $RESULTS
 
-
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 declare -a num_arr=("4000000")
 NUM=4000000
