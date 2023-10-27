@@ -21,14 +21,11 @@ cd $BASE/appbench/apps/snappy-c
 cd $BASE/appbench/apps/RocksDB-YCSB
 ./compile.sh &> $COMPILEOUT/rocksdb-ycsb.out
 
-cd $BASE/appbench/apps/simple_bench/multi_thread_read
-./compile.sh &> $COMPILEOUT/multi_thread_read.out
+cd $BASE/appbench/apps/simple_bench/scalability
+./compile.sh &> $COMPILEOUT/scalability
 
 cd $BASE/appbench/apps/simple_bench/mmap_exp
 ./compile.sh &> $COMPILEOUT/mmap_exp.out
-
-cd $BASE/appbench/apps/filebench
-./compile.sh &> $COMPILEOUT/filebench.out
 
 cd $BASE
 exit

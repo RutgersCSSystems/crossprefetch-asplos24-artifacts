@@ -8,13 +8,15 @@ unsigned long get_prefetch_offset(struct cache_state_node** cache_states, int n,
 	off_t start_pg = start_pos >> PAGE_SHIFT;
 	off_t curr_pg = start_pg;
 	off_t prefetch_limit_pg = (NODE_SIZE_LIMIT) >> PAGE_SHIFT;
-    bit_array_t *page_cache_state = NULL;
+        bit_array_t *page_cache_state = NULL;
 
     for (int i = 0; i < n; i++) {
         page_cache_state = cache_states[i]->page_cache_state;
         if (page_cache_state == NULL) break;
+
         pthread_mutex_lock(&cache_states[i]->lock);
-        while(curr_pg < (start_pg + prefetch_limit_pg)){
+        
+	while(curr_pg < (start_pg + prefetch_limit_pg)){
 
             if(BitArrayTestBit(page_cache_state, curr_pg)){
                 curr_pg += 1;
