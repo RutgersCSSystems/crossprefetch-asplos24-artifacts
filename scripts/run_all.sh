@@ -3,8 +3,8 @@ set -x
 #create empty file
 touch $BASE/dummy.txt
 
-EXEC=$BASE/scripts/exec
-mkdir $EXEC
+EXEC=$BASE/AERESULTS
+mkdir -p $EXEC
 
 
 cd $BASE
