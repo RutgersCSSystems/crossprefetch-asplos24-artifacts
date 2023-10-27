@@ -3,6 +3,6 @@ Table for shared access
 -----------------------
 threads,APPonly,OSonly,CrossP[+predict+opt],CrossP[+fetchall+opt]
 1473,1462,1688,5258
-1645,1682,1375,3716
-1378,988,945,1926
+1645,1660,1636,3953
+1624,1705,1354,1926
 1390,784,907,3094
