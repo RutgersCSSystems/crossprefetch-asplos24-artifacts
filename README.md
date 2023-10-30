@@ -166,7 +166,7 @@ cat RESULT.csv
 ```
 
 Next, let's run microbenchmarks on per-thread private files with sequential and random accesses. This is going to take some time to generate a 
-large 200GB data.
+large data.
 ```
 cd $BASE/appbench/apps/multi_read
 ./compile.sh

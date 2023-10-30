@@ -16,7 +16,7 @@ FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) -DNR_THREADS=$(NR_THREAD
 
 SHARED_FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) 
 
-all: read_pvt write_pvt
+all: read_pvt write_pvt read_shared write_shared
 
 read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq $(LIBS)
@@ -27,10 +27,18 @@ read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DSTRIDED_READ -o $(BIN_DIR)/read_pvt_strided $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_pvt_rand $(LIBS)
 
-
+read_shared: read.cpp utils/thpool.c
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla_opt $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_shared_rand $(LIBS)
 
 write_pvt: write.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -o $(BIN_DIR)/write_pvt $(LIBS)
+
+
+write_shared: write.cpp utils/thpool.c
+	$(CXX) $^ $(SHARED_FLAGS) -DNR_THREADS=1 $(DEBUG) -o $(BIN_DIR)/write_shared $(LIBS)
 
 clean:
 	rm -rf bigfakefile*

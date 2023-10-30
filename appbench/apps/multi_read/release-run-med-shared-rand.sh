@@ -33,7 +33,7 @@ DISABLE_LOCK_STATS()
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=200 ##GB
+FILESIZE=12 ##GB
 NR_RA_PAGES=2560L #nr_pages
 NR_READ_PAGES=16
 #NR_READ_PAGES=512
@@ -43,9 +43,8 @@ APPOUTPUTNAME="simplebench"
 
 declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
-declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT")
-declare -a workload_arr=("read_pvt_seq") 
+declare -a workload_arr=("read_shared_rand") 
 
 G_TRIAL="TRIAL1"
 
@@ -73,29 +72,17 @@ CLEAN_AND_WRITE() {
         UNSETPRELOAD
 
         CLEAR_FILES
-        ./bin/write_pvt
+        ./bin/write_shared
 
         FlushDisk
 }
 
 Vanilla() {
-        echo "Read Pvt Seq Vanilla RA"
+        echo "Read Pvt Rand Vanilla RA"
         FlushDisk
         
         #export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-        ./bin/read_pvt_seq_vanilla
-        export LD_PRELOAD=""
-        
-        sudo dmesg -c
-        
-}
-
-VanillaOPT() {
-        echo "Read Pvt Seq Vanilla RA OPT"
-        FlushDisk
-        
-        #export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-        ./bin/read_pvt_seq_vanilla_opt
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -107,7 +94,7 @@ OSonly() {
         FlushDisk
         
         export LD_PRELOAD="/usr/lib/lib_OSonly.so"
-        ./bin/read_pvt_seq
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -119,7 +106,7 @@ CIPI_PERF() {
         FlushDisk
         
         export LD_PRELOAD="/usr/lib/lib_CIPI_PERF.so"
-        ./bin/read_pvt_seq
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -131,7 +118,7 @@ CIPI_PERF_NOOPT() {
         FlushDisk
         
         export LD_PRELOAD="/usr/lib/lib_CIPI_PERF_NOOPT.so"
-        ./bin/read_pvt_seq
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -144,7 +131,7 @@ CrossInfo() {
         FlushDisk
         
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-        ./bin/read_pvt_seq
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -156,7 +143,7 @@ CII() {
         FlushDisk
         
         export LD_PRELOAD="/usr/lib/lib_CII.so"
-        ./bin/read_pvt_seq
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -168,7 +155,7 @@ CIP() {
         FlushDisk
         
         export LD_PRELOAD="/usr/lib/lib_CIP.so"
-        ./bin/read_pvt_seq
+        ./bin/read_shared_rand
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -180,7 +167,7 @@ MINCORE() {
         FlushDisk
         
         export LD_PRELOAD=""
-        ./bin/read_pvt_seq_mincore
+        ./bin/read_shared_rand_mincore
         export LD_PRELOAD=""
         
         sudo dmesg -c
@@ -191,7 +178,7 @@ GEN_RESULT_PATH() {
         CONFIG=$2
         THREAD=$3
 	READSIZE=$4
-        RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/"pvt_seq"/$THREAD/
+        RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/"shared_rand"/$THREAD/
         mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG.out
 }
@@ -207,7 +194,7 @@ do
 		do
 			FlushDisk	
 			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
-			echo "RUNNING....$WORLOAD.....$CONFIG....$RESULTFILE"
+			#echo "RUNNING....$WORLOAD.....$CONFIG....$RESULTFILE"
 			$CONFIG &> $RESULTFILE
 			#cat $RESULTFILE | grep "MB/s"
 			FlushDisk
