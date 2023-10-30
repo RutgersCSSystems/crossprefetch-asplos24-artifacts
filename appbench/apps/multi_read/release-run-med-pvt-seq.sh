@@ -44,7 +44,7 @@ APPOUTPUTNAME="simplebench"
 declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
 declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
-declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT")
+declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIPI")
 declare -a workload_arr=("read_pvt_seq") 
 
 G_TRIAL="TRIAL1"
@@ -126,19 +126,6 @@ CIPI_PERF() {
         
 }
 
-CIPI_PERF_NOOPT() {
-        echo "CIPI PERF"
-        FlushDisk
-        
-        export LD_PRELOAD="/usr/lib/lib_CIPI_PERF_NOOPT.so"
-        ./bin/read_pvt_seq
-        export LD_PRELOAD=""
-        
-        sudo dmesg -c
-        
-}
-
-
 CrossInfo() {
         echo "Cross Info"
         FlushDisk
@@ -199,16 +186,11 @@ GEN_RESULT_PATH() {
 
 for NPROC in "${nproc[@]}"
 do
-	cp PARAMS.sh $PREDICT_LIB_DIR/compile.sh
-	cp Makefile.SIMPLE $PREDICT_LIB_DIR/Makefile
-	cd $PREDICT_LIB_DIR
-	./compile.sh &>> out.txt
+	cd simple_prefetcher
+	./compile.sh
 	cd $DBHOME
 
         COMPILE_APP $NPROC
-
-
-
         CLEAN_AND_WRITE
 	for CONFIG in "${config_arr[@]}"
 	do
@@ -218,12 +200,9 @@ do
 			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
 			echo "RUNNING....$WORLOAD.....$CONFIG....$RESULTFILE"
 			$CONFIG &> $RESULTFILE
-			#cat $RESULTFILE | grep "MB/s"
+			cat $RESULTFILE | grep "MB/s"
 			FlushDisk
 			#MINCORE &> MINCORE_${FILENAMEBASE}
 		done
 	done 
 done
-
-cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
-cp $PREDICT_LIB_DIR/COMPILEORIG.sh $PREDICT_LIB_DIR/compile.sh

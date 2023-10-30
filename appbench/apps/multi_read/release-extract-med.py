@@ -3,8 +3,8 @@ import csv
 
 # Define the arrays
 thread_arr = ["16"]
-workload_arr = ["pvt_seq", "pvt_rand", "shared_seq", "shared_rand"]
-config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF_NOOPT", "CIPI_PERF"]
+workload_arr = ["pvt_seq", "pvt_rand"]
+config_arr = ["Vanilla", "OSonly", "CII", "CIP", "CIPI_PERF"]
 config_out_arr = ["APPonly", "OSonly", "CrossP[+fetchall+opt]", "CrossP[+predict]", "CrossP[+predict+opt]"]
 readsize_arr = ["128"]
 

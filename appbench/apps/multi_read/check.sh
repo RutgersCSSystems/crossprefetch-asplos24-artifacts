@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DBHOME=$PWD
+
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
@@ -8,9 +10,6 @@ fi
 
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
-
-APPOUTPUTNAME="simplebench"
-RESULTFILE=""
 
 FlushDisk()
 {
@@ -36,15 +35,20 @@ DISABLE_LOCK_STATS()
 NR_STRIDE=64 ##In pages, only relevant for strided
 FILESIZE=200 ##GB
 NR_RA_PAGES=2560L #nr_pages
-NR_READ_PAGES=512
-##These need to be equivalent of the above
-RA_SIZE=10M ##MB
-READ_SIZE=2M ##MB
+NR_READ_PAGES=16
+#NR_READ_PAGES=512
+RESULTFILE=""
+APPOUTPUTNAME="simplebench"
 
-APP="./bin/read_pvt_rand"
 
-#declare -a nproc=("16" "4" "8" "1" "32")
+declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
+declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
+declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII")
+declare -a config_arr=("CIPI_PERF")
+declare -a workload_arr=("read_pvt_seq") 
+
+G_TRIAL="TRIAL1"
 
 
 #deletes all the Read files
@@ -54,8 +58,12 @@ CLEAR_FILES() {
 
 #Compiles the application
 COMPILE_APP() {
-        CREATE_OUTFOLDER ./bin
-        make -j SIZE=$FILESIZE NR_READ_PAGES=$NR_READ_PAGES NR_THREADS=$1 NR_STRIDE=$NR_STRIDE NR_RA_PAGES=$NR_RA_PAGES
+	cd $PREDICT_LIB_DIR
+	make clean &> OUT.txt
+	make -j16 &>> OUT.txt
+	cd $DBHOME
+        CREATE_OUTFOLDER ./bin &> OUT.txt
+        make -j SIZE=$FILESIZE NR_READ_PAGES=$NR_READ_PAGES NR_THREADS=$1 NR_STRIDE=$NR_STRIDE NR_RA_PAGES=$NR_RA_PAGES &>>OUT.txt
 }
 
 
@@ -71,68 +79,98 @@ CLEAN_AND_WRITE() {
         FlushDisk
 }
 
-
-VanillaRA() {
-        echo "Read Shared Seq Vanilla RA"
+Vanilla() {
+        echo "Read Pvt Seq Vanilla RA"
         FlushDisk
-        export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-        ./bin/read_shared_seq_vanilla
-	${APP}_vanilla
+        
+        #export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
+        ./bin/read_pvt_seq_vanilla
         export LD_PRELOAD=""
+        
         sudo dmesg -c
+        
 }
 
-Vanilla() {
-        echo "Vanilla"
+VanillaOPT() {
+        echo "Read Pvt Seq Vanilla RA OPT"
         FlushDisk
-        export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-	${APP}  &> $RESULTFILE
+        
+        #export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
+        ./bin/read_pvt_seq_vanilla_opt
         export LD_PRELOAD=""
+        
         sudo dmesg -c
+        
 }
 
 OSonly() {
         echo "OS Only"
         FlushDisk
+        
         export LD_PRELOAD="/usr/lib/lib_OSonly.so"
-	${APP} &> $RESULTFILE
+        ./bin/read_pvt_seq
         export LD_PRELOAD=""
+        
         sudo dmesg -c
+        
 }
 
 CIPI_PERF() {
+        echo "CIPI PERF"
+        FlushDisk
+        
+        export LD_PRELOAD="/usr/lib/lib_CIPI_PERF.so"
+        ./bin/read_pvt_seq
+        export LD_PRELOAD=""
+        
+        sudo dmesg -c
+        
+}
+
+CrossInfo() {
         echo "Cross Info"
         FlushDisk
-        export LD_PRELOAD="/usr/lib/lib_CIPI_PERF.so"
-	${APP} &> $RESULTFILE
+        
+        export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
+        ./bin/read_pvt_seq
         export LD_PRELOAD=""
+        
         sudo dmesg -c
+        
 }
 
 CII() {
-        echo "Cross Info Fetch All"
+        echo "Cross Info IOOPT"
         FlushDisk
+        
         export LD_PRELOAD="/usr/lib/lib_CII.so"
-	${APP} &> $RESULTFILE
+        ./bin/read_pvt_seq
         export LD_PRELOAD=""
+        
         sudo dmesg -c
+        
 }
 
 CIP() {
-        echo "Cross Info Mo OPT"
+        echo "Cross Info Predict"
         FlushDisk
+        
         export LD_PRELOAD="/usr/lib/lib_CIP.so"
-	${APP} &> $RESULTFILE
+        ./bin/read_pvt_seq
         export LD_PRELOAD=""
+        
         sudo dmesg -c
+        
 }
 
 MINCORE() {
         echo "Mincore"
         FlushDisk
+        
         export LD_PRELOAD=""
-        ${APP}_mincore
+        ./bin/read_pvt_seq_mincore
         export LD_PRELOAD=""
+        
         sudo dmesg -c
 }
 
@@ -140,7 +178,8 @@ GEN_RESULT_PATH() {
         WORKLOAD=$1
         CONFIG=$2
         THREAD=$3
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$WORKLOAD/$THREAD
+	READSIZE=$4
+        RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/"pvt_seq"/$THREAD/
         mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG.out
 }
@@ -149,34 +188,18 @@ GEN_RESULT_PATH() {
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
-        CLEAN_AND_WRITE
-
-        #FILENAMEBASE="stats_pvt_rand_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
-        #VanillaRA &> VanillaRA_${FILENAMEBASE}
-        #VanillaOPT &> VanillaOPT_${FILENAMEBASE}
-
-	RESULTFILE=""
-	GEN_RESULT_PATH "pvt_rand" "CIP" $NPROC
-        CIP
-
-	RESULTFILE=""
-	GEN_RESULT_PATH "pvt_rand" "CII" $NPROC
-        CII
-
-
-	RESULTFILE=""
-	GEN_RESULT_PATH "pvt_rand" "Vanilla" $NPROC
-        Vanilla
-
-	RESULTFILE=""
-	GEN_RESULT_PATH "pvt_rand" "OSonly" $NPROC
-        OSonly 
-
-
-	RESULTFILE=""
-        GEN_RESULT_PATH "pvt_rand" "CIPI_PERF" $NPROC
-	CIPI_PERF 
-
-        #MINCORE &> MINCORE_${FILENAMEBASE}
+        #CLEAN_AND_WRITE
+	for CONFIG in "${config_arr[@]}"
+	do
+		for WORKLOAD in "${workload_arr[@]}"
+		do
+			FlushDisk	
+			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
+			echo "RUNNING....$WORLOAD.....$CONFIG....$RESULTFILE"
+			$CONFIG &> $RESULTFILE
+			cat $RESULTFILE | grep "MB/s"
+			FlushDisk
+			#MINCORE &> MINCORE_${FILENAMEBASE}
+		done
+	done 
 done
-
