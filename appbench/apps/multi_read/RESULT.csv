@@ -2,19 +2,19 @@
 Table for pvt_seq
 -----------------------
 APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict],CrossP[+predict+opt]
-
+2134,2046,3540,4195,16213
 -----------------------
 Table for pvt_rand
 -----------------------
 APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict],CrossP[+predict+opt]
-
+3710,3623,3824,3310,29390
 -----------------------
 Table for shared_seq
 -----------------------
 APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict],CrossP[+predict+opt]
-1435,1438,1437,3393
+1435,1438,1437,1440,3393
 -----------------------
 Table for shared_rand
 -----------------------
 APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict],CrossP[+predict+opt]
-1432,1431,1431,2941
+1432,1431,1431,1440,2941

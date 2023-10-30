@@ -12,6 +12,8 @@ source $RUN_SCRIPTS/generic_funcs.sh
 APPOUTPUTNAME="simplebench"
 RESULTFILE=""
 
+DBHOME=$PWD
+
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -160,6 +162,14 @@ GEN_RESULT_PATH() {
 
 for NPROC in "${nproc[@]}"
 do
+
+	cd $DBHOME
+        cp PARAMS.sh $PREDICT_LIB_DIR/compile.sh
+        cp Makefile.SIMPLE $PREDICT_LIB_DIR/Makefile
+        cd $PREDICT_LIB_DIR
+        ./compile.sh &>> out.txt
+        cd $DBHOME
+
         COMPILE_APP $NPROC
         CLEAN_AND_WRITE
 
@@ -192,3 +202,5 @@ do
         #MINCORE &> MINCORE_${FILENAMEBASE}
 done
 
+cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
+cp $PREDICT_LIB_DIR/COMPILEORIG.sh $PREDICT_LIB_DIR/compile.sh

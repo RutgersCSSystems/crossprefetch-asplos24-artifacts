@@ -199,7 +199,16 @@ GEN_RESULT_PATH() {
 
 for NPROC in "${nproc[@]}"
 do
+	cp PARAMS.sh $PREDICT_LIB_DIR/compile.sh
+	cp Makefile.SIMPLE $PREDICT_LIB_DIR/Makefile
+	cd $PREDICT_LIB_DIR
+	./compile.sh &>> out.txt
+	cd $DBHOME
+
         COMPILE_APP $NPROC
+
+
+
         CLEAN_AND_WRITE
 	for CONFIG in "${config_arr[@]}"
 	do
@@ -215,3 +224,6 @@ do
 		done
 	done 
 done
+
+cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
+cp $PREDICT_LIB_DIR/COMPILEORIG.sh $PREDICT_LIB_DIR/compile.sh
