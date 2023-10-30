@@ -259,3 +259,19 @@ python3 release-extract-remote-med.py
 cat REMOTE-RESULT.csv
 ```
 
+### Running all at once (except remote storage experiment), when you are comfortable with individual steps
+
+This step is a master script that installs all packages, compiles all workloads, runs all workloads, and generates results in the $BASE/AERESULTS folder.
+The output in the result folder looks like Figure-XX-$APPNAME, where XX corresponds to the figure name in the paper, and the APPNAME corresponds to the name 
+of the application in the paper.
+
+```
+cd $BASE
+$BASE/scripts/install_packages.sh
+$BASE/scripts/compile_all.sh
+$BASE/scripts/run_all.sh
+```
+While we have tested the master script and works well, we recommend using this
+when you are confortable with the individual steps and and want to once more
+run all steps without needing to repeat everything again.
+
