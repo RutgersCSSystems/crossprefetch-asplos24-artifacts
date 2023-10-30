@@ -148,6 +148,11 @@ GEN_RESULT_PATH() {
 
 for NPROC in "${nproc[@]}"
 do
+
+	cd simple_prefetcher
+        ./compile.sh
+        cd $DBHOME
+
         COMPILE_APP $NPROC
         CLEAN_AND_WRITE
 
