@@ -153,7 +153,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-##### Running shared file access
+##### Running shared file access and other benchmarks
 
 Next, run the microbenchmark for shared file access, which will create 4 writer threads and vary reader threads from 1 to 16.
 
@@ -164,6 +164,18 @@ cd $BASE/appbench/apps/simple_bench/scalability/
 python3 release-extract-med.py
 cat RESULT.csv
 ```
+
+Next, let's run microbenchmarks on per-thread private files with sequential and random accesses. This is going to take some time to generate a 
+large 200GB data.
+```
+cd $BASE/appbench/apps/multi_read
+./compile.sh
+./release-run-med-pvt-rand.sh
+./release-run-med-pvt-seq.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
+
 
 #### Long Running (> 1 hour)
 We now discuss the results for long-running workloads, which can vary from tens
