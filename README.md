@@ -165,19 +165,6 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-Next, let's run microbenchmarks on per-thread private and shared files with sequential and random accesses. This is going to take some time to generate a 
-large data. **(Figure 5)**
-```
-cd $BASE/appbench/apps/multi_read
-./compile.sh
-./release-run-med-pvt-rand.sh
-./release-run-med-pvt-seq.sh
-./release-run-med-shared-rand.sh
-./release-run-med-shared-seq.sh
-python3 release-extract-med.py
-cat RESULT.csv
-```
-
 
 #### Long Running (> 1 hour)
 We now discuss the results for long-running workloads, which can vary from tens
