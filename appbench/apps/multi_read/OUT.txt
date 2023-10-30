@@ -1,14 +1,14 @@
 ./bin already exists
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -o ./bin/read_pvt_seq -lrt -lpthread -lm
-g++ write.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -o ./bin/write_pvt -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DREAD_SEQUENTIAL -o ./bin/read_shared_seq -lrt -lpthread -lm
-g++ write.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16  -DNR_THREADS=1  -o ./bin/write_shared -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_shared_seq_vanilla -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -DGLOBAL_TIMER -o ./bin/read_pvt_seq_global -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_shared_seq_vanilla_opt -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -DENABLE_MINCORE_RA -o ./bin/read_pvt_seq_mincore -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DREAD_RANDOM -o ./bin/read_shared_rand -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_pvt_seq_vanilla -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_pvt_seq_vanilla_opt -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -DSTRIDED_READ -o ./bin/read_pvt_strided -lrt -lpthread -lm
-g++ read.cpp utils/thpool.c -DFILESZ=200 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_RANDOM -o ./bin/read_pvt_rand -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -o ./bin/read_pvt_seq -lrt -lpthread -lm
+g++ write.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -o ./bin/write_pvt -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DREAD_SEQUENTIAL -o ./bin/read_shared_seq -lrt -lpthread -lm
+g++ write.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16  -DNR_THREADS=1  -o ./bin/write_shared -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_shared_seq_vanilla -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -DGLOBAL_TIMER -o ./bin/read_pvt_seq_global -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_shared_seq_vanilla_opt -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -DENABLE_MINCORE_RA -o ./bin/read_pvt_seq_mincore -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3 -DSHARED_FILE  -DREAD_RANDOM -o ./bin/read_shared_rand -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_pvt_seq_vanilla -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o ./bin/read_pvt_seq_vanilla_opt -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_SEQUENTIAL -DSTRIDED_READ -o ./bin/read_pvt_strided -lrt -lpthread -lm
+g++ read.cpp utils/thpool.c -DFILESZ=16 -DNR_PAGES_READ=16 -DNR_THREADS=16 -DNR_STRIDE=64 -DNR_RA_PAGES=2560L  -O3  -DREAD_RANDOM -o ./bin/read_pvt_rand -lrt -lpthread -lm

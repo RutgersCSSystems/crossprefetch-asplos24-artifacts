@@ -5,8 +5,8 @@ import csv
 thread_arr = ["1","4","8","16"]
 #workload_arr = ["read_shared_mmap_rand", "read_shared_mmap_seq"]
 #config_arr = ["Vanilla", "OSonly", "CIPI", "CIPI_interval"]
-config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CIPI_interval"]
-config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
+config_arr = ["Vanilla", "OSonly", "CIPI_PERF_NOPT", "CIPI_interval"]
+config_out_arr = ["APPonly", "OSonly", "CrossP[+fetchall+opt]", "CrossP[+predict+opt]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")

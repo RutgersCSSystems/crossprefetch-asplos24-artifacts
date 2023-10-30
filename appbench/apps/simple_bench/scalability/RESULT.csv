@@ -1,8 +1,8 @@
 -----------------------
 Table for shared access
 -----------------------
-threads,APPonly,OSonly,CrossP[+predict+opt],CrossP[+fetchall+opt]
-1658,1614,1658,5798
-1648,1622,992,2773
-1422,1163,901,3369
-1133,1403,896,2388
+threads,APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict+opt]
+1512,1520,1452,4354
+1505,1502,1255,3263
+1422,1413,1310,3180
+831,1374,1405,2778

@@ -25,7 +25,7 @@ let MAX_READER=16
 let MAX_WRITER=4
 ERR=100
 
-declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CIPI_interval")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF_NOPT" "CIPI_interval")
 
 #
 FILESIZE="12G"
