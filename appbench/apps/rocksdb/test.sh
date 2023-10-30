@@ -52,6 +52,8 @@ declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT" "CIPI_PERF" "CPBI_PERF")
+
+declare -a workload_arr=("readseq")
 declare -a config_arr=("CIPI_PERF" "CIPI_PERF_NOOPT" "CII" "Vanilla" "OSonly")
 
 G_TRIAL="TRIAL1"
