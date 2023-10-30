@@ -51,7 +51,7 @@ declare -a membudget=("6")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
-declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT" "CIPI_PERF")
+declare -a config_arr=("CIPI_PERF" "CII" "CIPI_PERF_NOOPT" "Vanilla" "OSonly")
 
 
 G_TRIAL="TRIAL1"

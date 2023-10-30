@@ -27,6 +27,9 @@ cd $BASE/appbench/apps/simple_bench/scalability
 cd $BASE/appbench/apps/simple_bench/mmap_exp
 ./compile.sh &> $COMPILEOUT/mmap_exp.out
 
+cd $BASE/appbench/apps/multi_read
+./compile.sh &> $COMPILEOUT/multi_read.out
+
 cd $BASE
 exit
 
