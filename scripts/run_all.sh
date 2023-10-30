@@ -86,8 +86,6 @@ RUN_MMAPEXP
 sleep 10
 RUN_SIMPLEBENCH
 sleep 10
-RUN_MULTIREAD
-sleep 10
 RUN_SNAPPY
 sleep 10
 exit
