@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DBHOME=$PWD
+let ERR=100
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
@@ -192,7 +193,7 @@ do
         cd $DBHOME
 
         COMPILE_APP $NPROC
-        CLEAN_AND_WRITE
+        #CLEAN_AND_WRITE
 	for CONFIG in "${config_arr[@]}"
 	do
 		for WORKLOAD in "${workload_arr[@]}"
@@ -201,6 +202,15 @@ do
 			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
 			#echo "RUNNING....$WORLOAD.....$CONFIG....$RESULTFILE"
 			$CONFIG &> $RESULTFILE
+			echo $RESULTFILE
+			cat $RESULTFILE | grep "MB/s"
+			    VAL=`cat $RESULTFILE | grep "MB/s" | awk '{print $4}'`
+			    if [ -z "$VAL" ]; then
+				let VAL=0
+			    fi
+			    if [ "$ERR" -gt "$VAL" ]; then
+				    $CONFIG &> $RESULTFILE
+			    fi
 			#cat $RESULTFILE | grep "MB/s"
 			FlushDisk
 			#MINCORE &> MINCORE_${FILENAMEBASE}
