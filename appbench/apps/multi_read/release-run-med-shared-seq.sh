@@ -187,11 +187,8 @@ GEN_RESULT_PATH() {
 for NPROC in "${nproc[@]}"
 do
 
-	cd $DBHOME
-        cp PARAMS.sh $PREDICT_LIB_DIR/compile.sh
-        cp Makefile.SIMPLE $PREDICT_LIB_DIR/Makefile
-        cd $PREDICT_LIB_DIR
-        ./compile.sh &>> out.txt
+	cd simple_prefetcher
+        ./compile.sh
         cd $DBHOME
 
         COMPILE_APP $NPROC
@@ -210,6 +207,3 @@ do
 		done
 	done 
 done
-
-cp $PREDICT_LIB_DIR/ORIGMAKEFILE $PREDICT_LIB_DIR/Makefile
-cp $PREDICT_LIB_DIR/COMPILEORIG.sh $PREDICT_LIB_DIR/compile.sh
