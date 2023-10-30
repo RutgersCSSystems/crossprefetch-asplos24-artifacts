@@ -151,10 +151,6 @@ do
         COMPILE_APP $NPROC
         CLEAN_AND_WRITE
 
-        #FILENAMEBASE="stats_pvt_rand_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
-        #VanillaRA &> VanillaRA_${FILENAMEBASE}
-        #VanillaOPT &> VanillaOPT_${FILENAMEBASE}
-
 	RESULTFILE=""
 	GEN_RESULT_PATH "pvt_rand" "CIP" $NPROC
         CIP

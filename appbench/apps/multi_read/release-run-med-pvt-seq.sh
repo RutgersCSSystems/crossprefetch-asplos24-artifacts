@@ -43,7 +43,6 @@ APPOUTPUTNAME="simplebench"
 
 declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
-declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIPI")
 declare -a workload_arr=("read_pvt_seq") 
 
@@ -150,11 +149,11 @@ CII() {
         
 }
 
-CIP() {
+CIPI() {
         echo "Cross Info Predict"
         FlushDisk
         
-        export LD_PRELOAD="/usr/lib/lib_CIP.so"
+        export LD_PRELOAD="/usr/lib/lib_CIPI.so"
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
         
