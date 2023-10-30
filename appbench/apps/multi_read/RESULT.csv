@@ -1,0 +1,10 @@
+-----------------------
+Table for pvt_seq
+-----------------------
+APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict],CrossP[+predict+opt]
+3815,3991,4483,4186,14820
+-----------------------
+Table for pvt_rand
+-----------------------
+APPonly,OSonly,CrossP[+fetchall+opt],CrossP[+predict],CrossP[+predict+opt]
+4854,4906,5036,4923,23628

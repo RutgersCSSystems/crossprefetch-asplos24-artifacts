@@ -1,0 +1,15 @@
+This has many threads, each reading pvt files
+
+
+Two Modes:
+1. Readseq
+2. Read Rand : Using Fisher–Yates shuffle (also known as Knuth's Shuffle)
+
+File Modes:
+1. Shared File : All pthreads share one file
+2. Pvt Files : each pthread has its own file
+
+
+Binary Meanings:
+1. read_pvt_seq_vanilla - Do one readahead for the whole file range read by this thread
+2. read_pvt_seq_vanilla_opt - Do 256 pg prefetches before reads
