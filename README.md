@@ -110,7 +110,7 @@ ycsbwkldb,316638,340164,583153....
 
 ##### Running RocksDB + DB_bench 
 
-Next, we will run RocksDB with different access patterns on a widely used KV benchmark DB_bench. (Figure 7b)
+Next, we will run RocksDB with different access patterns on a widely used KV benchmark DB_bench. **(Figure 7b)**
 
 ```
 cd $BASE/appbench/apps/rocksdb
@@ -132,7 +132,7 @@ Note: We observe that OSonly performance may vary on different machines with var
 storage due to its reliance on OS prefetching, which can be unpredictable and occasionally 
 improve performance. This highlights the need for a Cross-layered approach.
 
-(2) Next, we will understanding Scalability for RocksDB + DB_bench (Figure 7a)
+(2) Next, we will understanding Scalability for RocksDB + DB_bench **(Figure 7a)**
 ```
 cd $BASE/appbench/apps/rocksdb
 ./release-scale-run-med.sh
@@ -155,7 +155,7 @@ cat RESULT.csv
 
 ##### Running shared file access and other benchmarks 
 
-Next, run the microbenchmark for shared file access, which will create 4 writer threads and vary reader threads from 1 to 16. (Figure 6)
+Next, run the microbenchmark for shared file access, which will create 4 writer threads and vary reader threads from 1 to 16. **(Figure 6)**
 
 ```
 cd $BASE/appbench/apps/simple_bench/scalability/
@@ -166,7 +166,7 @@ cat RESULT.csv
 ```
 
 Next, let's run microbenchmarks on per-thread private files with sequential and random accesses. This is going to take some time to generate a 
-large 200GB data. (Figure 5)
+large 200GB data. **(Figure 5)**
 ```
 cd $BASE/appbench/apps/multi_read
 ./compile.sh
@@ -245,7 +245,7 @@ After that, you can run `lsblk` to check that the `/mnt/remote` is mounted on th
 
 **2. Running experiments**
 
-For remote storage execution, we need to run the following scripts on the client node.
+For remote storage execution, we need to run the following scripts on the client node. **(Figure 8a)**
 
 ```
 cd $BASE/appbench/apps/rocksdb
