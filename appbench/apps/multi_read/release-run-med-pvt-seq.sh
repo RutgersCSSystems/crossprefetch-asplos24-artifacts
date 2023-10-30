@@ -44,8 +44,7 @@ APPOUTPUTNAME="simplebench"
 declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
 declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
-declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII")
-declare -a config_arr=("CIP")
+declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIP")
 declare -a workload_arr=("read_pvt_seq") 
 
 G_TRIAL="TRIAL1"
@@ -197,7 +196,7 @@ do
 			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
 			echo "RUNNING....$WORLOAD.....$CONFIG....$RESULTFILE"
 			$CONFIG &> $RESULTFILE
-			cat $RESULTFILE | grep "MB/s"
+			#cat $RESULTFILE | grep "MB/s"
 			FlushDisk
 			#MINCORE &> MINCORE_${FILENAMEBASE}
 		done

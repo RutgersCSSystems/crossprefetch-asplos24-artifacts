@@ -19,7 +19,6 @@ SHARED_FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES)
 all: read_pvt write_pvt
 
 read_pvt: read.cpp utils/thpool.c
-	mkdir bin
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DGLOBAL_TIMER -o $(BIN_DIR)/read_pvt_seq_global $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DENABLE_MINCORE_RA -o $(BIN_DIR)/read_pvt_seq_mincore $(LIBS)
