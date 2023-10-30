@@ -118,6 +118,18 @@ CII() {
         sudo dmesg -c
 }
 
+
+CIPI_PERF_NOOPT() {
+        echo "CIPI NOOPT"
+        FlushDisk
+
+        export LD_PRELOAD="/usr/lib/lib_CIPI_PERF_NOOPT.so"
+        ${APP} &> $RESULTFILE
+        export LD_PRELOAD=""
+        sudo dmesg -c
+
+}
+
 CIP() {
         echo "Cross Info Mo OPT"
         FlushDisk
@@ -156,8 +168,8 @@ do
         #VanillaOPT &> VanillaOPT_${FILENAMEBASE}
 
 	RESULTFILE=""
-	GEN_RESULT_PATH "pvt_rand" "CIP" $NPROC
-        CIP
+	GEN_RESULT_PATH "pvt_rand" "CIPI_PERF_NOOPT" $NPROC
+        CIPI_PERF_NOOPT
 
 	RESULTFILE=""
 	GEN_RESULT_PATH "pvt_rand" "CII" $NPROC

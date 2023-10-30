@@ -44,7 +44,7 @@ APPOUTPUTNAME="simplebench"
 declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
 declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
-declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIP")
+declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT")
 declare -a workload_arr=("read_pvt_seq") 
 
 G_TRIAL="TRIAL1"
@@ -126,6 +126,19 @@ CIPI_PERF() {
         
 }
 
+CIPI_PERF_NOOPT() {
+        echo "CIPI PERF"
+        FlushDisk
+        
+        export LD_PRELOAD="/usr/lib/lib_CIPI_PERF_NOOPT.so"
+        ./bin/read_pvt_seq
+        export LD_PRELOAD=""
+        
+        sudo dmesg -c
+        
+}
+
+
 CrossInfo() {
         echo "Cross Info"
         FlushDisk
@@ -187,7 +200,7 @@ GEN_RESULT_PATH() {
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
-        CLEAN_AND_WRITE
+        #CLEAN_AND_WRITE
 	for CONFIG in "${config_arr[@]}"
 	do
 		for WORKLOAD in "${workload_arr[@]}"
