@@ -49,9 +49,9 @@ ENABLE_MEM_SENSITIVE=0
 
 declare -a membudget=("6")
 declare -a trials=("TRIAL1")
-declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
-declare -a thread_arr=("32")
-declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT" "CIPI_PERF" "CPBI_PERF")
+declare -a workload_arr=("multireadrandom")
+declare -a thread_arr=("32" "16"  "8"  "4" "1")
+declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT" "CIPI_PERF")
 
 
 G_TRIAL="TRIAL1"
@@ -95,11 +95,11 @@ GEN_RESULT_PATH() {
 
 	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
 	then 
-		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"SCALE"/$WORKLOAD/$THREAD
 		mkdir -p $RESULTS
 		RESULTFILE=$RESULTS/$CONFIG".out"
 	else
-        	RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+        	RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"SCALE"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
 		mkdir -p $RESULTS
 		RESULTFILE=$RESULTS/$CONFIG".out"
 	fi
