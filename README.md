@@ -172,6 +172,8 @@ cd $BASE/appbench/apps/multi_read
 ./compile.sh
 ./release-run-med-pvt-rand.sh
 ./release-run-med-pvt-seq.sh
+./release-run-med-shared-rand.sh
+./release-run-med-shared-seq.sh
 python3 release-extract-med.py
 cat RESULT.csv
 ```
