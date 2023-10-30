@@ -132,6 +132,14 @@ Note: We observe that OSonly performance may vary on different machines with var
 storage due to its reliance on OS prefetching, which can be unpredictable and occasionally 
 improve performance. This highlights the need for a Cross-layered approach.
 
+(2) Next, we will understanding Scalability for RocksDB + DB_bench
+```
+cd $BASE/appbench/apps/rocksdb
+./release-scale-run-med.sh
+python3 release-scale-extract-med.py
+cat SCALE-RESULT.csv
+```
+
 
 ##### Running MMAP 
 
