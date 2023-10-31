@@ -81,7 +81,7 @@ Before compiling, we must ensure the environmental variables are set by `set_var
 
  The following commands will install the necessary packages to compile RocksDB with YCSB. 
 
-**If you logged out before running this step and resuming, please set the environmental variables again. For example,**
+Please set the environmental variables again only if you are resuming after logging out. For example,
 ```
 cd ~/ssd/crossprefetch-asplos24-artifacts
 source ./scripts/setvars.sh
@@ -97,7 +97,7 @@ application-controlled prefetching, which is a Vanilla RocksDB), OSonly (OS
 controlled) by turning off application prefetch operations and Cross-prefetch
 configurations for various thread counts and workloads.
 
-Please set the environmental variables again if you are resuming after logging out. For example,
+Please set the environmental variables again only if you are resuming after logging out. For example,
 ```
 cd ~/ssd/crossprefetch-asplos24-artifacts
 source ./scripts/setvars.sh
@@ -126,7 +126,7 @@ ycsbwkldb,316638,340164,583153....
 
 Next, we will run RocksDB with different access patterns on a widely used KV benchmark DB_bench. **(Figure 7b)**
 
-Please set the environmental variables again if you are resuming after logging out. For example,
+Please set the environmental variables again only if you are resuming after logging out. For example,
 ```
 cd ~/ssd/crossprefetch-asplos24-artifacts
 source ./scripts/setvars.sh
@@ -166,7 +166,7 @@ cat SCALE-RESULT.csv
 
 Next, run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
 
-Please set the environmental variables again if you are resuming after logging out. For example,
+Please set the environmental variables again only if you are resuming after logging out. For example,
 ```
 cd ~/ssd/crossprefetch-asplos24-artifacts
 source ./scripts/setvars.sh
