@@ -76,6 +76,10 @@ RUN_MULTIREAD() {
 
 
 cd $BASE
+RUN_MULTIREAD
+sleep 10
+exit
+
 RUN_RocksDB-YCSB
 sleep 10
 RUN_RocksDB

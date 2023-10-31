@@ -80,6 +80,13 @@ First, we will start with running medium workloads. As a first step, we will sta
 Before compiling, we must ensure the environmental variables are set by `set_vars.sh`.
 
  The following commands will install the necessary packages to compile RocksDB with YCSB. 
+
+**If you logged out before running this step and resuming, please set the environmental variables again. For example,**
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
 ./compile.sh
@@ -89,6 +96,13 @@ We run YCSB with multiple configurations of RocksDB by varying APPonly (i.e.,
 application-controlled prefetching, which is a Vanilla RocksDB), OSonly (OS
 controlled) by turning off application prefetch operations and Cross-prefetch
 configurations for various thread counts and workloads.
+
+Please set the environmental variables again if you are resuming after logging out. For example,
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
 
 Then run YCSB, extract, and see the results
 ```
@@ -111,6 +125,13 @@ ycsbwkldb,316638,340164,583153....
 ##### Running RocksDB + DB_bench 
 
 Next, we will run RocksDB with different access patterns on a widely used KV benchmark DB_bench. **(Figure 7b)**
+
+Please set the environmental variables again if you are resuming after logging out. For example,
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
 
 ```
 cd $BASE/appbench/apps/rocksdb
@@ -145,6 +166,13 @@ cat SCALE-RESULT.csv
 
 Next, run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
 
+Please set the environmental variables again if you are resuming after logging out. For example,
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
+
 ```
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
 ./compile.sh
@@ -156,6 +184,13 @@ cat RESULT.csv
 ##### Running shared file access and other benchmarks 
 
 Next, run the microbenchmark for shared file access, which will create 4 writer threads and vary reader threads from 1 to 16. **(Figure 6)**
+
+Please set the environmental variables again if you are resuming after logging out. For example,
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
 
 ```
 cd $BASE/appbench/apps/simple_bench/scalability/
@@ -188,6 +223,13 @@ The snappy experiment runs a benchmark that concurrently compresses different
 folders across threads. We generate an input of around 300GB-350GB of data. The
 scripts also reduce the available memory for the application to study the
 effectiveness of CrossPrefetch under reducing memory capacity.
+
+Please set the environmental variables again if you are resuming after logging out. For example,
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
 
 ```
 cd $BASE/appbench/apps/snappy-c
@@ -247,6 +289,14 @@ After that, you can run `lsblk` to check that the `/mnt/remote` is mounted on th
 **2. Running experiments**
 
 For remote storage execution, we need to run the following scripts on the client node. **(Figure 8a)**
+
+Please set the environmental variables in the client side where you are running. For example,
+```
+cd ~/ssd/crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+```
+
+
 
 ```
 cd $BASE/appbench/apps/rocksdb
