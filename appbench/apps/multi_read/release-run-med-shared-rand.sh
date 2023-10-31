@@ -193,7 +193,7 @@ do
         cd $DBHOME
 
         COMPILE_APP $NPROC
-        #CLEAN_AND_WRITE
+        CLEAN_AND_WRITE
 	for CONFIG in "${config_arr[@]}"
 	do
 		for WORKLOAD in "${workload_arr[@]}"
