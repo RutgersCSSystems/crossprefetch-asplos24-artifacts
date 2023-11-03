@@ -251,6 +251,7 @@ To evaluate RocksDB on F2FS, we need to umount the current filesystem, format th
 sudo umount ~/ssd
 sudo mkfs.f2fs -f /dev/nvme0n1
 sudo mount /dev/nvme0n1 ~/ssd
+sudo chown -R $USER ~/ssd
 ```
 
 After successfully mounting F2FS, we must clone the repo, set the environment, and recompile the code to run RocksDB.
