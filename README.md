@@ -245,7 +245,7 @@ cat RESULT.csv
 
 To evaluate RocksDB on F2FS, we need to umount the current filesystem, format the disk, and mount the F2FS on the same folder.
 
-**Please note that all previous data and results will be deleted! Make sure to backup all your results before you execute the following instructions.**
+**Please note that all previous data and results will be deleted! Make sure to backup all your results (all `RESULT.csv` files) before you execute the following instructions.**
 
 ```
 sudo umount ~/ssd
