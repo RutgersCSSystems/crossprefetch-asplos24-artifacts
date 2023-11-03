@@ -7,7 +7,7 @@ workload_arr = ["100"]
 filesize_arr = ["140000"]
 config_arr = ["Vanilla",  "OSonly", "CII", "CIPI_PERF"] 
 config_out_arr = ["APPonly", "OSonly", "CrossP[+fetchall+opt]" "CrossP[+predict+opt]"]
-membudget = ["10", "11", "12", "13", "14"]
+membudget = ["1:1", "1:2", "1:3", "1:4", "1:5"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")

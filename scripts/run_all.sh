@@ -75,8 +75,8 @@ RUN_MULTIREAD() {
 
 
 cd $BASE
-RUN_RocksDB-YCSB
-sleep 10
+#RUN_RocksDB-YCSB
+#sleep 10
 RUN_RocksDB
 sleep 10
 RUN_RocksDB_SCALE
