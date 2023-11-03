@@ -241,7 +241,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-#### Running F2FS Experiments
+#### Running F2FS Experiments (Figure 7d)
 
 To evaluate RocksDB on F2FS, we need to umount the current filesystem, format the disk, and mount the F2FS on the same folder.
 
