@@ -241,6 +241,46 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+#### Running F2FS Experiments (Figure 7d)
+
+To evaluate RocksDB on F2FS, we need to umount the current filesystem, format the disk, and mount the F2FS on the same folder.
+
+**Please note that all previous data and results will be deleted! Make sure to backup all your results (all `RESULT.csv` files) before you execute the following instructions.**
+
+```
+sudo umount ~/ssd
+sudo mkfs.f2fs -f /dev/nvme0n1
+sudo mount /dev/nvme0n1 ~/ssd
+sudo chown -R $USER ~/ssd
+```
+
+After successfully mounting F2FS, we must clone the repo, set the environment, and recompile the code to run RocksDB.
+
+```
+cd ssd
+git clone https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts
+cd crossprefetch-asplos24-artifacts
+source ./scripts/setvars.sh
+cd $BASE/shared_libs/simple_prefetcher/
+./compile.sh
+```
+
+Now, let's run RocksDB
+
+```
+cd $BASE/appbench/apps/rocksdb
+./compile.sh
+./gendata-run-med.sh
+./release-run-med.sh
+```
+
+To extract and see the results
+
+```
+python3 release-extract-med.py
+cat RESULT.csv
+```
+
 #### Running Remote Storage Experiments
 For remote storage experiments, we will use `m510` with remote NVMe support.
 These nodes are easily available and quick to launch!  We have already created
