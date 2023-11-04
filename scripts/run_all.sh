@@ -73,6 +73,15 @@ RUN_MULTIREAD() {
 	cat RESULT.csv &> $EXEC/Figure5-multiread.out
 }
 
+RUN_ROCKSDBMEM() {
+	cd $BASE/appbench/apps/rocksdb
+	# The value indicates an input to generate the dataset
+	./gendata-run-med.sh &>> $EXEC/rocksdbmem.out
+	./release-run-mem.sh &>> $EXEC/rocksdbmem.out
+	python3 release-extract-mem.py &>> $EXEC/rocksdbmem.out
+	cat MEM-RESULT.csv  &> $EXEC/Figure7c-rocksdbmem.out
+}
+
 
 cd $BASE
 RUN_RocksDB-YCSB
@@ -88,6 +97,8 @@ sleep 10
 RUN_MULTIREAD
 sleep 10
 RUN_SNAPPY
+sleep 10
+RUN_ROCKSDBMEM
 sleep 10
 exit
 

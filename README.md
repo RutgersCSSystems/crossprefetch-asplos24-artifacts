@@ -241,6 +241,17 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+Let's repeat the experiment for RocksDB. Note, this is long running, so please be patient! (Figure 7c)
+```
+cd $BASE/appbench/apps/rocksdb
+# The value indicates an input to generate the dataset
+./gendata-run-med.sh
+./release-run-mem.sh
+python3 release-extract-mem.py
+cat MEM-RESULT.csv
+```
+
+
 #### Running F2FS Experiments (Figure 7d)
 
 To evaluate RocksDB on F2FS, we need to umount the current filesystem, format the disk, and mount the F2FS on the same folder.
