@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 DBHOME=$PWD
 THREAD=16
 VALUE_SIZE=4096
@@ -36,25 +36,25 @@ RESULTFILE=""
 mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a num_arr=("4000000")
-NUM=4000000
+declare -a num_arr=("15000000")
+NUM=15000000
 
 #declare -a thread_arr=("32" "16"  "8"  "4" "1")
 #declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
-USEDB=1
-MEM_REDUCE_FRAC=0
-ENABLE_MEM_SENSITIVE=0
 
-declare -a membudget=("6")
+USEDB=1
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
+
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
-declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF_NOOPT" "CIPI_PERF" "CPBI_PERF")
+declare -a workload_arr=("multireadrandom")
+declare -a config_arr=("CPBI_PERF" "CIPI_PERF" "CII" "Vanilla" "OSonly")
+declare -a membudget=("3" "2" "4" "1")
 
-declare -a workload_arr=("readseq")
-declare -a config_arr=("CIPI_PERF" "CIPI_PERF_NOOPT" "CII" "Vanilla" "OSonly")
 
 G_TRIAL="TRIAL1"
 #Require for large database
@@ -200,17 +200,18 @@ RUN() {
 }
 
 GETMEMORYBUDGET() {
-    sudo rm -rf  /mnt/ext4ramdisk/*
-    $SCRIPTS/mount/umount_ext4ramdisk.sh
-    sudo rm -rf  /mnt/ext4ramdisk/*
-    sudo rm -rf  /mnt/ext4ramdisk/
+
+    	sudo rm -rf  /mnt/ext4ramdisk/*
+    	$SCRIPTS/mount/umount_ext4ramdisk.sh
+    	sudo rm -rf  /mnt/ext4ramdisk/*
+    	sudo rm -rf  /mnt/ext4ramdisk/
 
 	echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
 	$SCRIPTS/mount/releasemem.sh "NODE0"
 	$SCRIPTS/mount/releasemem.sh "NODE1"
 
-    let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-    let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
 
 	echo "MEMORY $1"
 	let FRACTION=$1
@@ -221,13 +222,15 @@ GETMEMORYBUDGET() {
 	let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
 
 
-    numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
-    numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
 
 
 #COMPILE
+$SCRIPTS/mount/releasemem.sh "NODE0"
+$SCRIPTS/mount/releasemem.sh "NODE1"
 
 for G_TRIAL in "${trials[@]}"
 do
@@ -245,4 +248,6 @@ do
 	fi
 done
 
+$SCRIPTS/mount/releasemem.sh "NODE0"
+$SCRIPTS/mount/releasemem.sh "NODE1"
 
