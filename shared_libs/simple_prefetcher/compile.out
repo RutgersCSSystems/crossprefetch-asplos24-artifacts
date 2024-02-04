@@ -1,13 +1,13 @@
-make: Entering directory '/users/Jian123/ssd/backup/test/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
+make: Entering directory '/users/kannan11/ssd/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
 gcc -Wall -ggdb -D_FILE_OFFSET_BITS=64 -fPIC -shared -o libintervaltreelib.so interval_tree.o rbtree.o -ldl
-make: Leaving directory '/users/Jian123/ssd/backup/test/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
-make: Entering directory '/users/Jian123/ssd/backup/test/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
+make: Leaving directory '/users/kannan11/ssd/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
+make: Entering directory '/users/kannan11/ssd/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
 sudo cp *.so /usr/local/lib
 sudo cp *.so /usr/lib
 sudo cp *.h /usr/local/include
 sudo cp *.h /usr/include
 sudo cp *.h /usr/lib/
-make: Leaving directory '/users/Jian123/ssd/backup/test/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
+make: Leaving directory '/users/kannan11/ssd/crossprefetch-asplos24-artifacts/shared_libs/simple_prefetcher/interval-tree'
 g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_Vanilla.so libOSonly.cpp -lpthread -lrt -ldl   \
     -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=38
 g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_Cross_Blind.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
