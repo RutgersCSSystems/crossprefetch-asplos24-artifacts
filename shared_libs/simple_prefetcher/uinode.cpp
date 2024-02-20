@@ -284,9 +284,9 @@ bool is_file_closed(struct u_inode *uinode, int fd){
 			return false;
 		}
 	}
-
 	return true;
 #endif
+	return false;
 }
 
 #ifdef _PERF_OPT
@@ -539,10 +539,12 @@ bool is_memory_danger_low(void) {
 
 int set_memory_low(bool islowmem) {
 	g_lowmem_thresh = islowmem;
+	return 0;
 }
 
 int set_memory_danger_low(bool islowmem) {
         g_dangermem_thresh = islowmem;
+	return 0;
 }
 
 

@@ -1838,6 +1838,24 @@ exit_pread:
 }
 
 
+ssize_t read(int fd, void *data, size_t size){
+
+	ssize_t amount_read;
+
+	debug_printf("%s: fd=%d, size=%ld\n", __func__, fd, size);
+
+	//read_predictor(NULL, size, fd, offset);
+
+skip_predictor:
+	amount_read = real_read(fd, data, size);
+
+exit_pread:
+	return amount_read;
+}
+
+
+
+
 /*Several applications use fgets*/
 
 char *fgets( char *str, int num, FILE *stream ) {

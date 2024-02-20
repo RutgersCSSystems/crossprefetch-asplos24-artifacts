@@ -142,7 +142,7 @@ int real_clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
 
 int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
 
-	debug_printf("%s\n", __func__);
+    printf("%s\n", __func__);
 
     if(!posix_fadvise_ptr)
         posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
@@ -158,6 +158,9 @@ ssize_t real_readahead(int fd, off_t offset, size_t count){
 }
 
 int real_madvise(void *addr, size_t length, int advice){
+
+    printf("%s:%d \n", __func__, __LINE__);
+
     if(!madvise_ptr)
         madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
 
@@ -168,6 +171,8 @@ int real_madvise(void *addr, size_t length, int advice){
 void* real_mmap(void *addr, size_t length, int prot, int flags,
         int fd, off_t offset) {
 
+    printf("%s:%d \n", __func__, __LINE__);
+
     if(!mmap_ptr)
         mmap_ptr = (real_mmap_t)dlsym(RTLD_NEXT, "mmap");
 
@@ -177,7 +182,7 @@ void* real_mmap(void *addr, size_t length, int prot, int flags,
 
 FILE *real_fopen(const char *filename, const char *mode){
 
-	debug_printf("%s:%d filen: %s\n", __func__, __LINE__, filename);
+    printf("%s:%d filen: %s\n", __func__, __LINE__, filename);
 
     if(!fopen_ptr)
         fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
@@ -187,7 +192,7 @@ FILE *real_fopen(const char *filename, const char *mode){
 
 size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-    debug_printf("%s %zu\n", __func__, size);
+    printf("%s %zu\n", __func__, size);
 
     if(!fread_ptr)
         fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
@@ -198,7 +203,7 @@ size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 /*Several applications use fgets*/
 char *real_fgets( char *str, int num, FILE *stream ) {
 
-	debug_printf("%s %d\n", __func__, num);
+    printf("%s %d\n", __func__, num);
 
     if(!fgets_ptr)
         fgets_ptr = (real_fgets_t)dlsym(RTLD_NEXT, "fgets");
@@ -210,6 +215,8 @@ char *real_fgets( char *str, int num, FILE *stream ) {
 
 size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
+    printf("%s\n", __func__);
+
     if(!fwrite_ptr)
         fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
 
@@ -218,7 +225,7 @@ size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
-    debug_printf("%s %zu\n", __func__, size);
+    printf("%s %zu\n", __func__, size);
 
     if(!pread_ptr)
         pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
@@ -229,7 +236,7 @@ ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
 ssize_t real_write(int fd, const void *data, size_t size) {
 
-	debug_printf("Using real write %zu\n", size);
+    printf("%s  %zu\n", __func__, size);
 
     if(!write_ptr)
         write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
@@ -240,7 +247,7 @@ ssize_t real_write(int fd, const void *data, size_t size) {
 
 ssize_t real_read(int fd, void *data, size_t size) {
 
-	debug_printf("%s %zu\n", __func__, size);
+    printf("%s %zu\n\n", __func__, size);
 
     if(!read_ptr)
         read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
@@ -258,7 +265,7 @@ int real_openat(int dirfd, const char *pathname, int flags, mode_t mode){
 
 int real_open(const char *pathname, int flags, mode_t mode){
 
-     debug_printf("%s\n", __func__);
+    printf("%s\n", __func__);
 
     if(!open_ptr)
         open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
