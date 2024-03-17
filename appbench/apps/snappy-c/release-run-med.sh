@@ -40,8 +40,8 @@ glob_prefechthrd=1
 #enable sensitivity study?
 let glob_enable_sensitive=0
 
-MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=0
 declare -a membudget=("5" "4" "3" "2" "6")
 declare -a membudget=("6" "8" "9")
 declare -a membudget=("10" "11" "12" "13" "14")

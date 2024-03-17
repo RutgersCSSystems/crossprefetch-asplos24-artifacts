@@ -1,4 +1,5 @@
-CFLAGS ?= -Wall -O2 -DNDEBUG=1 -fPIC -D_USE_THREADING  -D_POSIX
+#CFLAGS ?= -Wall -O2 -DNDEBUG=1 -fPIC -D_USE_THREADING  -D_POSIX
+CFLAGS ?= -Wall -DNDEBUG=1 -fPIC -D_USE_THREADING  -D_POSIX
 #CFLAGS ?= -Wall -g -O2 -DNDEBUG=1 -fPIC -mno-avx -mno-avx2 -mno-avx512f -mno-avx512cd -mno-sse4.2 -mno-sse4.1 -mno-sse2 -mno-ssse3
 
 # Remove -DSG=1 if you don't need scather-gather support
