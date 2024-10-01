@@ -185,3 +185,4 @@ sphinx_*/
 shared_libs/simple_prefetcher/interval-tree/interval-tree-test
 shared_libs/simple_prefetcher/interval-tree/interval_csv
 appbench/apps/snappy-c/DATA/
+*.test
