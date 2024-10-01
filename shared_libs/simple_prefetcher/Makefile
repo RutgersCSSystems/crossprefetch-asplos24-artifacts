@@ -2,7 +2,7 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl #-lmpi
-FLAGS+==-fPIC -shared -std=c++14 -Wno-unused-result -O3 #-g
+FLAGS+=-fPIC -shared -std=c++14 -Wno-unused-result -O3 #-g
 INCLUDE=
 
 KB=1024
