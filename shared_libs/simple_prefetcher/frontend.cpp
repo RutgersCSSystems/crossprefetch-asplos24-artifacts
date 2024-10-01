@@ -1826,7 +1826,6 @@ ssize_t pread64(int fd, void *data, size_t size, off_t offset){
 
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-    GET_LATENCY_START;
 	ssize_t amount_read;
 
 	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
@@ -1834,7 +1833,9 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	read_predictor(NULL, size, fd, offset);
 
 skip_predictor:
+    GET_LATENCY_START;
 	amount_read = real_pread(fd, data, size, offset);
+	GET_LATENCY_END;
 
 exit_pread:
 	return amount_read;
