@@ -1,11 +1,11 @@
 #ifndef LATENCY_HPP
 #define LATENCY_HPP
 
-#define GET_LATENCY
+// #define GET_LATENCY
 #include <time.h>
 #include <stdio.h>
 
-// #ifdef GET_LATENCY
+#ifdef GET_LATENCY
 #define GET_LATENCY_START ( \
             struct timespec ts0, ts1; \
             clock_gettime(CLOCK_MONOTONIC_RAW, &ts0); \
