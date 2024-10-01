@@ -23,6 +23,7 @@
 #include <iterator>
 #include <atomic>
 
+
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
@@ -32,6 +33,7 @@
 #include <sys/wait.h>
 #include <sys/resource.h>
 
+#include "latency.hpp"
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
@@ -1824,6 +1826,7 @@ ssize_t pread64(int fd, void *data, size_t size, off_t offset){
 
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
+    GET_LATENCY_START;
 	ssize_t amount_read;
 
 	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
