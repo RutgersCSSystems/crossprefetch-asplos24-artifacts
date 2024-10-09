@@ -111,7 +111,7 @@ EXECUTE() {
 
     CONFIG=$1
     #echo "RUNNING $CONFIG $PARAMS $READARGS and writing results to  $RESULTFILE"
-    export LD_PRELOAD="/usr/lib/lib_latency.so:/usr/lib/lib_$CONFIG.so"
+    export LD_PRELOAD="/usr/lib/liblatency.so:/usr/lib/lib_$CONFIG.so"
     $APPPREFIX "./"$APP $PARAMARG $ARGS > $RESULTFILE 2> "$RESULTFILE.err"
     export LD_PRELOAD=""
 
@@ -173,7 +173,7 @@ RUN() {
 
 						echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
 
-						export LD_PRELOAD="/usr/lib/lib_latency.so:/usr/lib/lib_$CONFIG.so"
+						export LD_PRELOAD="/usr/lib/liblatency.so:/usr/lib/lib_$CONFIG.so"
 						$APPPREFIX "./"$APP $PARAMS $READARGS > $RESULTFILE 2> "$RESULTFILE.err"
 						export LD_PRELOAD=""
 
