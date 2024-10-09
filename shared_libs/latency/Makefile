@@ -25,8 +25,5 @@ install: latency
 test: $(SOURCE) 
 	$(CC) $(FLAGS) -DGET_LATENCY -DLATENCY_DEBUG -DLATENCY_SAMPLE=1 $(LIBS) $^ -o liblatency.so
 	$(MAKE) -C ./test
-<<<<<<< HEAD
 	$(MAKE) run -C ./test
-=======
->>>>>>> abca209882160fcdb68ca605e29b3ba4313f894b
 
